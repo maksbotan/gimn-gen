@@ -1,0 +1,26 @@
+<ul id="navigation">
+    {% for node in nodes %}
+    <li class="{% if node.active %}active{% elif node.last %}last{% endif %}">
+        <a href="{% if node.active %}#{% else %}{{node.link}}{% endif %}">
+            <span class="menu-left"></span>
+            <span class="menu-mid">{{ node.text }}</span>
+            <span class="menu-right"></span>
+        </a>
+    {% if node.subs %}
+    <div class="sub">
+        <ul>
+        {% for sub in node.subs %}
+            <li>
+            <a href="{{ sub.link }}">{{ sub.text }}</a>
+            </li>
+        {% endfor %}
+        </ul>
+        <div class="btm-bg"></div>
+    </div>
+    {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+
+<!-- vim: ft=htmldjango 
+-->
