@@ -1,0 +1,38 @@
+{% extends "main.tmp" %}
+{% block content %}
+<div class="content">
+    <!-- START OF jQuery-->
+    <div id="featured" >
+        <ul class="ui-tabs-nav">
+    	    <li class="ui-tabs-nav-item ui-tabs-selected" id="nav-fragment-1"><a href="#fragment-1"><img src="images/image1-small.jpg" alt="" />Модель выпускника</a></li>
+	        <li class="ui-tabs-nav-item" id="nav-fragment-2"><a href="#fragment-2"><img src="images/image2-small.jpg" alt="" /><span>XIII Форум</span></a></li>
+    	    <li class="ui-tabs-nav-item" id="nav-fragment-3"><a href="#fragment-3"><img src="images/image3-small.jpg" alt="" />Встречаем гостей</a></li>
+    	    <li class="ui-tabs-nav-item" id="nav-fragment-4"><a href="#fragment-4"><img src="images/image4-small.jpg" alt="" /><span>Наш адрес</span></a></li>
+        </ul>
+
+        {% for content in featured %}
+        <div id="fragment-{{loop.index}}" class="ui-tabs-panel" style="">
+            <img src="{{prefix}}images/image{{loop.index}}.jpg" alt="" />
+            <div class="info">
+                <h2><a href="#">{{content.title}}</a></h2>
+                <p>{{content.text}}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <!-- END OF jQuery-->   
+    <div class="daily_news">
+        <h3>Новость дня</h3>
+        <p>{{notd}}</p>
+    </div>
+</div>
+<div class="content-bottom"></div>
+<!-- Main info-->
+<div class="content">
+{% include content %}
+</div>
+<div class="content-bottom"></div>
+{% endblock %}
+
+<!-- vim: ft=htmldjango
+--!>
