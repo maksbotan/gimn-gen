@@ -9,11 +9,41 @@ structure = [
       'sources': 'index.cont',
       'subs': []
     },
+    {
+      'name': 'vizitka',
+      'title': u'Визитка',
+      'template': 'main.tmp',
+      'modules': [],
+      'sources': 'fish.cont',
+      'subs': [
+                { 'name': 'administration',
+                  'title': u'Администрация',
+                  'template': 'main.tmp',
+                  'modules': [],
+                  'sources': 'admin.cont',
+                  'subs': []
+                },
+                { 'name': 'contacts',
+                  'title': u'Контактная информация',
+                  'template': 'main.tmp',
+                  'modules': [],
+                  'sources': 'contacts.cont',
+                  'subs': []
+                },
+                { 'name': 'priemnaya',
+                  'title': u'Электронная приёмная',
+                  'template': 'main.tmp',
+                  'modules': [],
+                  'sources': 'fish.cont',
+                  'subs': []
+                }
+              ]
+    },
     { 'name': 'innovacii',
       'title': u'Инновации',
       'template': 'main.tmp',
       'modules': [],
-      'sources': 'innovacii.cont',
+      'sources': 'fish.cont',
       'subs': [
                 { 'name': 'introdaction',
                   'title': u'«Введение в интеллектуальную жизнь»',

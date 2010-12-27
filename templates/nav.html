@@ -11,7 +11,7 @@
         <ul>
         {% for sub in node.subs %}
             <li>
-            <a href="{{ node.name }}/{{ sub.name }}.htm">{{ sub.title }}</a>
+            <a href="{{ prefix }}{{ node.name }}/{{ sub.name }}.htm">{{ sub.title }}</a>
             </li>
         {% endfor %}
         </ul>

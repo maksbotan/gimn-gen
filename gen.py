@@ -1,10 +1,7 @@
 #!/usr/bin/env python
 
 import jinja2
-import os
-
-from modules import nav
-import site_map
+import os, imp
 
 OUTPUT_DIR = 'generated'
 
@@ -28,12 +25,23 @@ class Generator():
         template = self.get_template(node['template'])
         with open(os.path.join(OUTPUT_DIR, path, '%s.htm' % node['name']), 'w') as f:
             print '[+][+] Writing file %s' % os.path.join(path, node['name'])
+
+            modules = {}
+            for i in node['modules']:
+                try:
+                    module = imp.load_source(i, 'modules/%s.py' % i)
+                except:
+                    raise Exception('Unknown module: %s' % i)
+    
+                modules[i] = getattr(module,i)
+
             f.write(template.render(
                 prefix = '../' * level,
                 title  = node['title'],
                 content = open(os.path.join('content', node['sources']),'r').read().decode('utf-8'),
                 nodes = self.structure,
-                name = node['name']
+                name = node['name'],
+                **modules
                 ).encode('utf8'))
 
         for sub in node['subs']:
