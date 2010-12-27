@@ -29,7 +29,7 @@
 <div class="content-bottom"></div>
 <!-- Main info-->
 <div class="content">
-{% include content %}
+{{ content }}
 </div>
 <div class="content-bottom"></div>
 {% endblock %}

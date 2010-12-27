@@ -1,11 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="hu" lang="hu">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" lang="ru">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title>Кировская гимназия :: {{ title }}</title>
+    <title>Кировская гимнаpия :: {{ title }}</title>
 
-	<style media="all" type="text/css">@import "style.css";</style>
+	<style media="all" type="text/css">@import "{{ prefix }}style.css";</style>
 	<!--[if lt IE 7]>
 		<link rel="stylesheet" type="text/css" href="/include/ie6.css" media="screen"/>
 	<![endif]-->
@@ -22,7 +22,7 @@
     <div class="logo">
         <table>
             <td>
-                <img src="images/logo2.jpg" alt="" width="100" height="100" />
+                <img src="{{ prefix }}images/logo2.jpg" alt="" width="100" height="100" />
             </td>
             <td width="400px">
                 <h4>Кировская гимназия
@@ -31,7 +31,7 @@
             </td>
             <td width="460px">
                 <p>&nbsp;</p>
-                <p><a href="http://dnevnik.ru/"><img src="images/Dnevnik2.jpg" alt="" width="120" height="57" align="right" /></a></p>
+                <p><a href="http://dnevnik.ru/"><img src="{{ prefix }}images/Dnevnik2.jpg" alt="" width="120" height="57" align="right" /></a></p>
             </td>
         </table>
     </div>
@@ -45,10 +45,9 @@
 		</div>
         {% block content %}
         <div class="content"></div>
-        <div class="content-bottom"></div>
         <!-- Main info-->
         <div class="content">
-        {% include content %}
+        {{ content }}
         </div>
         <div class="content-bottom"></div>
         {% endblock %}

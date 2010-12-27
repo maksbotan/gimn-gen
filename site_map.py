@@ -3,25 +3,25 @@
 
 structure = [
     { 'name': 'index',
-      'title': 'Главная',
+      'title': u'Главная',
       'template': 'index.tmp',
       'modules': [ 'featured', 'notd'],
-      'sources': [ 'index.cont' ],
+      'sources': 'index.cont',
       'subs': []
     },
     { 'name': 'innovacii',
-      'title': 'Инновации',
+      'title': u'Инновации',
       'template': 'main.tmp',
       'modules': [],
       'sources': 'innovacii.cont',
       'subs': [
                 { 'name': 'introdaction',
-                  'title': '«Введение в интеллектуальную жизнь»',
+                  'title': u'«Введение в интеллектуальную жизнь»',
                   'template': 'main.tmp',
                   'modules': [],
                   'sources': 'introdaction.cont',
                   'subs': []
                 },
               ]
-     },
+    }
 ]
