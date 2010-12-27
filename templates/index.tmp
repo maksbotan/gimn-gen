@@ -4,10 +4,12 @@
     <!-- START OF jQuery-->
     <div id="featured" >
         <ul class="ui-tabs-nav">
-    	    <li class="ui-tabs-nav-item ui-tabs-selected" id="nav-fragment-1"><a href="#fragment-1"><img src="images/image1-small.jpg" alt="" />Модель выпускника</a></li>
-	        <li class="ui-tabs-nav-item" id="nav-fragment-2"><a href="#fragment-2"><img src="images/image2-small.jpg" alt="" /><span>XIII Форум</span></a></li>
-    	    <li class="ui-tabs-nav-item" id="nav-fragment-3"><a href="#fragment-3"><img src="images/image3-small.jpg" alt="" />Встречаем гостей</a></li>
-    	    <li class="ui-tabs-nav-item" id="nav-fragment-4"><a href="#fragment-4"><img src="images/image4-small.jpg" alt="" /><span>Наш адрес</span></a></li>
+        {% for content in featured %}
+    	    <li class="ui-tabs-nav-item{% if loop.first %}  ui-tabs-selected{% endif %}" id="nav-fragment-{{ loop.index }}">
+                <a href="#fragment-{{ loop.index }}">
+                    <img src="images/image{{ loop.index }}-small.jpg" alt="" />{{ content.annot }}</a>
+            </li>
+        {% endfor %}
         </ul>
 
         {% for content in featured %}
