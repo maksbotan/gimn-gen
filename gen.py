@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import jinja2
-import os, imp
+import os, imp, json
 
 OUTPUT_DIR = 'generated'
 
@@ -10,8 +10,7 @@ class Generator():
         self.env = jinja2.Environment(loader=jinja2.FileSystemLoader('templates', encoding='utf-8'))
         self.templates = [ self.env.get_template(i) for i in os.listdir('templates') if i.endswith('.tmp') ]
         
-        import site_map
-        self.structure = site_map.structure
+        self.structure = json.load(open('site_map.json', 'r'), encoding='utf-8')
 
     def process_node(self, node, level, path):
         prefix = "../" * level
