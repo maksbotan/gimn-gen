@@ -25,11 +25,27 @@ class GeneratorGUI():
         self.modules_vbox = self.widgets.get_widget('modules')
         self.populate_modules()
 
+        self.templates_combo = self.widgets.get_widget('template')
+        self.populate_templates()
+
         self.window.show_all()
         self.widgets.signal_autoconnect({'generate': self.generate})
 
     def generate(self, data=None):
         self.save_map()
+
+    def populate_templates(self):
+        templates = [ i for i in os.listdir('templates') if i.endswith('.tmp') ]
+
+        self.templates_model = gtk.ListStore(gobject.TYPE_STRING)
+
+        for template in templates:
+            self.templates_model.append([template])
+
+        cell = gtk.CellRendererText()
+        self.templates_combo.set_model(self.templates_model)
+        self.templates_combo.pack_start(cell)
+        self.templates_combo.add_attribute(cell, 'text', 0)
 
     def populate_modules(self):
         modules = [ i for i in os.listdir('modules') if i.endswith('.py') and i != '__init__.py' ]
