@@ -75,7 +75,24 @@ class GeneratorGUI():
             checkbox = gtk.CheckButton(module)
             self.checks[checkbox] = module
             self.modules_vbox.pack_start(checkbox, False)
-            
+            checkbox.connect("toggled", self.module_checked)
+
+    def module_checked(self, check):
+        model, iter = self.selection.get_selected()
+        if not iter:
+            return
+
+        modules = self.model.get(iter, 3)[0]
+        module = self.checks[check]
+        if check.get_active():
+            if not module in modules:
+                modules.append(module)
+        else:
+            if module in modules:
+                modules.remove(module)
+
+        self.model.set(iter, 3, modules)
+
     def text_edited(self, entry, column=None):
         if column == None:
             return
