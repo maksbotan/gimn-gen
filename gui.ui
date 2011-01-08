@@ -432,25 +432,11 @@
                           </packing>
                         </child>
                         <child>
-                          <widget class="GtkScrolledWindow" id="scrolledwindow1">
+                          <widget class="GtkVBox" id="modules">
                             <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="hscrollbar_policy">automatic</property>
-                            <property name="vscrollbar_policy">automatic</property>
+                            <property name="orientation">vertical</property>
                             <child>
-                              <widget class="GtkViewport" id="viewport1">
-                                <property name="visible">True</property>
-                                <property name="resize_mode">queue</property>
-                                <child>
-                                  <widget class="GtkVBox" id="modules">
-                                    <property name="visible">True</property>
-                                    <property name="orientation">vertical</property>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                  </widget>
-                                </child>
-                              </widget>
+                              <placeholder/>
                             </child>
                           </widget>
                           <packing>
@@ -506,6 +492,7 @@
                 <child>
                   <widget class="GtkToolbar" id="toolbar1">
                     <property name="visible">True</property>
+                    <property name="toolbar_style">both-horiz</property>
                     <child>
                       <widget class="GtkToolButton" id="save">
                         <property name="visible">True</property>

@@ -35,6 +35,10 @@ class GeneratorGUI():
         self.templates_combo = self.widgets.get_widget('template')
         self.populate_templates()
 
+        self.custom_area = gtk.HBox()
+        self.widgets.get_widget('right_pane').pack_start(self.custom_area)
+        self.source_editor = self.widgets.get_widget('editor')
+
         self.window.show_all()
 
         self.widgets.signal_autoconnect({
@@ -43,7 +47,8 @@ class GeneratorGUI():
                         'new_child': self.new_child,
                         'remove_node': self.remove_node,
                         'move_up': self.move_up,
-                        'move_down': self.move_down})
+                        'move_down': self.move_down,
+                        'show_editor': self.show_editor})
         self.widgets.get_widget('name').connect('changed', self.text_edited, 0)
         self.widgets.get_widget('title').connect('changed', self.text_edited, 1)
         self.widgets.get_widget('source').connect('changed', self.text_edited, 4)
@@ -256,6 +261,14 @@ class GeneratorGUI():
             node['subs'] = []
 
         return node
+
+    def show_editor(self, btn):
+        self.custom_area.foreach(self.custom_area.remove)
+
+        if self.source_editor.get_parent():
+            self.source_editor.reparent(self.custom_area)
+        else:
+            self.custom_area.add(self.source_editor)
 
     def close(self):
         self.save_map()
