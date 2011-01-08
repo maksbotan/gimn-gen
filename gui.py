@@ -237,8 +237,8 @@ class GeneratorGUI():
             map.append(self.serialize_node(iter))
             iter = self.model.iter_next(iter)
 
-#        json.dump(open('site_map.json', 'r'), self.map, encoding='utf-8')
-        print json.dumps(map, encoding='utf-8')
+        json.dump(map, open('site_map.json', 'w'), encoding='utf-8')
+#        print json.dumps(map, encoding='utf-8')
         self.map = map
 
     def serialize_node(self, iter):
@@ -248,7 +248,10 @@ class GeneratorGUI():
 
         child = self.model.iter_children(iter)
         if child:
-            node['subs'] = self.serialize_node(child)
+            node['subs'] = []
+            while child:
+                node['subs'].append(self.serialize_node(child))
+                child = self.model.iter_next(child)
         else:
             node['subs'] = []
 
