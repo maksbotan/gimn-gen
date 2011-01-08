@@ -41,7 +41,8 @@ class GeneratorGUI():
                         'generate': self.generate,
                         'new_node': self.new_node,
                         'new_child': self.new_child,
-                        'remove_node': self.remove_node})
+                        'remove_node': self.remove_node,
+                        'move_down': self.move_down})
         self.widgets.get_widget('name').connect('changed', self.text_edited, 0)
         self.widgets.get_widget('title').connect('changed', self.text_edited, 1)
         self.widgets.get_widget('source').connect('changed', self.text_edited, 4)
@@ -93,6 +94,13 @@ class GeneratorGUI():
         template = self.templates_model.get(template_iter, 0)[0]
 
         self.model.set(iter, 2, template)
+
+    def move_down(self, btn):
+        model, iter = self.selection.get_selected()
+        if not iter or not self.model.iter_next(iter):
+            return
+
+        self.model.swap(iter, self.model.iter_next(iter))
 
     def new_node(self, btn):
         model, iter = self.selection.get_selected()
