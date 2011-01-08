@@ -72,7 +72,7 @@ class GeneratorGUI():
         for module in modules:
             checkbox = gtk.CheckButton(module)
             self.checks[checkbox] = module
-            self.modules_vbox.pack_start(checkbox)
+            self.modules_vbox.pack_start(checkbox, False)
             
     def text_edited(self, entry, column=None):
         if column == None:
