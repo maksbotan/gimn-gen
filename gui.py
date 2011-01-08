@@ -14,7 +14,7 @@ class GeneratorGUI():
         self.widgets = gtk.glade.XML('gui.ui')
 
         self.window = self.widgets.get_widget('main_window')
-        self.window.connect('destroy', gtk.main_quit)
+        self.window.connect('destroy', self.close)
 
         self.edit_widgets = {
                 'name': self.widgets.get_widget('name'),
@@ -257,8 +257,15 @@ class GeneratorGUI():
 
         return node
 
+    def close(self):
+        self.save_map()
+        gtk.main_quit()
+
     def loop(self):
-        gtk.main()
+        try:
+            gtk.main()
+        except KeyboardInterrupt:
+            self.save_map()
 
 if __name__ == '__main__':
     gui = GeneratorGUI()
