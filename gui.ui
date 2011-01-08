@@ -32,6 +32,7 @@
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <property name="use_stock">True</property>
+                        <signal name="clicked" handler="new_node"/>
                       </widget>
                       <packing>
                         <property name="fill">False</property>
@@ -45,6 +46,7 @@
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <property name="use_stock">True</property>
+                        <signal name="clicked" handler="new_child"/>
                       </widget>
                       <packing>
                         <property name="fill">False</property>
@@ -58,6 +60,7 @@
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <property name="use_stock">True</property>
+                        <signal name="clicked" handler="remove_node"/>
                       </widget>
                       <packing>
                         <property name="fill">False</property>
@@ -352,6 +355,7 @@
                         <child>
                           <widget class="GtkComboBox" id="template">
                             <property name="visible">True</property>
+                            <signal name="changed" handler="select_template"/>
                           </widget>
                           <packing>
                             <property name="left_attach">1</property>

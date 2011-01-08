@@ -36,7 +36,16 @@ class GeneratorGUI():
         self.populate_templates()
 
         self.window.show_all()
-        self.widgets.signal_autoconnect({'generate': self.generate})
+
+        self.widgets.signal_autoconnect({
+                        'generate': self.generate,
+                        'new_node': self.new_node,
+                        'new_child': self.new_child,
+                        'remove_node': self.remove_node})
+        self.widgets.get_widget('name').connect('changed', self.text_edited, 0)
+        self.widgets.get_widget('title').connect('changed', self.text_edited, 1)
+        self.widgets.get_widget('source').connect('changed', self.text_edited, 4)
+        self.widgets.get_widget('template').connect('changed', self.select_template)
 
     def generate(self, data=None):
         self.save_map()
@@ -65,7 +74,50 @@ class GeneratorGUI():
             self.checks[checkbox] = module
             self.modules_vbox.pack_start(checkbox)
             
+    def text_edited(self, entry, column=None):
+        if column == None:
+            return
+
+        model, iter = self.selection.get_selected()
+        if not iter:
+            return
+
+        self.model.set(iter, column, entry.get_text())
+
+    def select_template(self, combo):
+        model, iter = self.selection.get_selected()
+        if not iter:
+            return
+        
+        template_iter = combo.get_active_iter()
+        template = self.templates_model.get(template_iter, 0)[0]
+
+        self.model.set(iter, 2, template)
+
+    def new_node(self, btn):
+        model, iter = self.selection.get_selected()
+
+        self.model.insert_after(None, iter, ['New', u'', '', [], ''])
+
+    def new_child(self, btn):
+        model, iter = self.selection.get_selected()
+
+        if self.model.iter_parent(iter):
+            return
+
+        self.model.append(iter, ['New', u'', '', [], ''])
+
+    def remove_node(self, btn):
+        model, iter = self.selection.get_selected()
+
+        if not iter:
+            return
+
+        self.model.remove(iter)
+
     def selection_changed(self, selection, data=None):
+        self.save_map()
+
         model, iter = selection.get_selected()
         if not iter:
             return
@@ -85,6 +137,7 @@ class GeneratorGUI():
         template = self.model.get(iter, 2)[0]
 
         iter = self.templates_model.get_iter_first()
+        index = None
         while iter:
             if self.templates_model.get(iter, 0)[0] == template:
                 index = iter
@@ -96,7 +149,6 @@ class GeneratorGUI():
             return
 
         self.templates_combo.set_active_iter(index)
-
 
     def populate_tree(self):
         self.model = gtk.TreeStore(
