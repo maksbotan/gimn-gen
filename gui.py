@@ -16,6 +16,13 @@ class GeneratorGUI():
         self.window = self.widgets.get_widget('main_window')
         self.window.connect('destroy', gtk.main_quit)
 
+        self.edit_widgets = {
+                'name': self.widgets.get_widget('name'),
+                'title': self.widgets.get_widget('title'),
+                'source': self.widgets.get_widget('source')
+        }
+
+
         self.treeview = self.widgets.get_widget('site_map')
         self.selection = self.treeview.get_selection()
         self.selection.set_mode(gtk.SELECTION_SINGLE)
@@ -48,7 +55,7 @@ class GeneratorGUI():
         self.templates_combo.add_attribute(cell, 'text', 0)
 
     def populate_modules(self):
-        modules = [ i for i in os.listdir('modules') if i.endswith('.py') and i != '__init__.py' ]
+        modules = [ i[:-3] for i in os.listdir('modules') if i.endswith('.py') and i != '__init__.py' ]
 
         self.checks = {}
         self.modules_vbox.foreach(self.modules_vbox.remove)
@@ -59,7 +66,37 @@ class GeneratorGUI():
             self.modules_vbox.pack_start(checkbox)
             
     def selection_changed(self, selection, data=None):
-        pass
+        model, iter = selection.get_selected()
+        if not iter:
+            return
+
+        self.edit_widgets['name'].set_text(self.model.get(iter, 0)[0])
+        self.edit_widgets['title'].set_text(self.model.get(iter, 1)[0])
+        self.edit_widgets['source'].set_text(self.model.get(iter, 4)[0])
+
+        modules = self.model.get(iter, 3)[0]
+
+        for i in self.checks.keys():
+            if self.checks[i] in modules:
+                i.set_active(True)
+            else:
+                i.set_active(False)
+
+        template = self.model.get(iter, 2)[0]
+
+        iter = self.templates_model.get_iter_first()
+        while iter:
+            if self.templates_model.get(iter, 0)[0] == template:
+                index = iter
+                break
+            iter = self.templates_model.iter_next(iter)
+
+        if not index:
+            print 'Template %s not found' % template
+            return
+
+        self.templates_combo.set_active_iter(index)
+
 
     def populate_tree(self):
         self.model = gtk.TreeStore(
