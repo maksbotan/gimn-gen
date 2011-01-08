@@ -51,7 +51,7 @@ class Generator():
         if temps:
             return temps[0]
         else:
-            raise Exception('Unkonwn template %s for node %s' % (node['template'], name))
+            raise Exception('Unkonwn template %s' % name)
         
     def recreate_dirs(self, filename):
         path = [ OUTPUT_DIR ] + filename.split(os.path.sep)
