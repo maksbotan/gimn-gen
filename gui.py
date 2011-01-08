@@ -191,7 +191,7 @@ class GeneratorGUI():
             iter = self.templates_model.iter_next(iter)
 
         if not index:
-            print 'Template %s not found' % template
+            index = self.templates_model.get_iter_first()
             return
 
         self.templates_combo.set_active_iter(index)
