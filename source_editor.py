@@ -17,7 +17,7 @@ class SourceEditor():
         #Get main widgets container
         self.editor_vbox = widgets_tree.get_widget('editor')
         #Detach it from useless gtk.Window
-        wnd = widget_tree.get_widget('editor_window')
+        wnd = widgets_tree.get_widget('editor_window')
         wnd.remove(self.editor_vbox)
         wnd.destroy()
 

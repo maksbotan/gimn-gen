@@ -3,6 +3,8 @@
 import os, json
 import gobject, gtk, gtk.glade
 
+import source_editor
+
 class GeneratorGUI():
     """
     Main class for GUI
@@ -35,9 +37,10 @@ class GeneratorGUI():
         self.templates_combo = self.widgets.get_widget('template')
         self.populate_templates()
 
-        self.custom_area = gtk.HBox()
+        self.custom_area = gtk.Notebook()
         self.widgets.get_widget('right_pane').pack_start(self.custom_area)
-        self.source_editor = self.widgets.get_widget('editor')
+        self.source_editor = source_editor.SourceEditor(self.widgets)
+        self.custom_area.append_page(self.source_editor.get_content(), gtk.Label("Source editor"))
 
         self.window.show_all()
 
@@ -203,6 +206,8 @@ class GeneratorGUI():
 
         self.templates_combo.set_active_iter(index)
 
+        #TODO: flush buffer in editor and switch it to empty buffer
+
     def populate_tree(self):
         self.model = gtk.TreeStore(
                         gobject.TYPE_STRING,    #name
@@ -265,12 +270,8 @@ class GeneratorGUI():
         return node
 
     def show_editor(self, btn):
-        self.custom_area.foreach(self.custom_area.remove)
-
-        if self.source_editor.get_parent():
-            self.source_editor.reparent(self.custom_area)
-        else:
-            self.custom_area.add(self.source_editor)
+        #TODO: Switch editor to current buffer
+        pass
 
     def close(self, wnd):
         self.save_map()
