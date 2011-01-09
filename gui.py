@@ -270,7 +270,7 @@ class GeneratorGUI():
         else:
             self.custom_area.add(self.source_editor)
 
-    def close(self):
+    def close(self, wnd):
         self.save_map()
         gtk.main_quit()
 
