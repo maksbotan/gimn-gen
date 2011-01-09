@@ -24,6 +24,21 @@ class SourceEditor():
         #Get gtk.ScrolledWindow, which is container for sourceview
         self.text_area = widgets_tree.get_widget('text_area')
 
+        #Initialize source language for SourceView
+        self.get_sourcelanguage()
+        #Initialize SourceView widget and add to container
+        self.view = gtksourceview2.View()
+        #Enable line numbers in it
+        self.view.set_show_line_numbers(True)
+        self.text_area.add(self.view)
+
+    def get_sourcelanguage(self):
+        """
+        Get gtksourceview2.Language instance for html
+        """
+        lm = gtksourceview2.LanguageManager()
+        self.lang = lm.get_language('html')
+
     def get_content(self):
         """
         Return main widget for embedding in main window
