@@ -1,4 +1,5 @@
 
+import os
 import gtk, gobject, gtksourceview2
 
 class SourceEditor():
@@ -26,14 +27,19 @@ class SourceEditor():
 
         #Dict of TextBuffers for editor
         self.buffers = {}
+        self.current_buffer = 'empty'
 
         #Initialize source language for SourceView
         self.get_sourcelanguage()
         #Initialize SourceView widget and add to container
         self.view = gtksourceview2.View()
-        #Enable line numbers in it
+        #Customize it's appearence
         self.view.set_show_line_numbers(True)
+        self.view.set_wrap_mode(gtk.WRAP_WORD_CHAR)
         self.text_area.add(self.view)
+
+        #Connect our signals
+        widgets_tree.signal_autoconnect({'save': self.save_buffer})
 
         #Create empty buffer and switch to it
         self.allocate_buffer('empty')
@@ -54,7 +60,8 @@ class SourceEditor():
         buffer = gtksourceview2.Buffer()
         buffer.set_language(self.lang)
 
-        self.buffers[name] = buffer
+        #Store in form [buffer, filename]
+        self.buffers[name] = [buffer, '']
 
     def remove_buffer(self, name):
         """
@@ -82,8 +89,56 @@ class SourceEditor():
             #No such buffer exists, abort
             return
 
-        #Do switch
-        self.view.set_buffer(self.buffers[name])
+        #Do switch and remember selection
+        self.view.set_buffer(self.buffers[name][0])
+        self.current_buffer = name
+
+    def load_file_to_buffer(self, file_name, buffer_name):
+        """
+        Clean buffer and load file contents to it
+
+        params:
+            - file_name: Name of file to load from,
+                should be text file in UTF-8
+            - buffer_name: Name of buffer to load to, should be
+                valid buffer created by allocate_buffer()
+        """
+
+        if not buffer_name in self.buffers or buffer_name == 'empty':
+            #Invalid buffer, abort
+            return
+
+        if not os.path.exists(file_name):
+            #If file doesn't exists, create new one
+            open(file_name, 'w').write('')
+
+        self.buffers[buffer_name][0].set_text(open(file_name, 'r').read())
+        self.buffers[buffer_name][1] = file_name
+
+    def flush_buffer(self, buffer_name=None):
+        """
+        Save buffer to file on disk
+
+        params:
+            - buffer_name: Name of buffer to save. If None, use currently active one
+        """
+
+        if not buffer_name:
+            #Use current buffer if none specified
+            buffer_name = self.current_buffer
+
+        if not buffer_name in self.buffers or buffer_name == 'empty':
+            #Invalid buffer, abort
+            return
+
+        with open(self.buffers[buffer_name][1], 'w') as f:
+            #Get gtk.TextIter pointing on start and end of buffer
+            start, end = self.buffers[buffer_name][0].get_bounds()
+            #Write buffer contents to file in UTF8
+            f.write(self.buffers[buffer_name][0].get_text(start, end).encode('utf-8'))
+
+    def save_buffer(self, btn):
+        self.flush_buffer()
 
     def get_sourcelanguage(self):
         """

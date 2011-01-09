@@ -471,6 +471,7 @@
                 <property name="label" translatable="yes">Save</property>
                 <property name="use_underline">True</property>
                 <property name="icon_name">document-save</property>
+                <signal name="clicked" handler="save"/>
               </widget>
               <packing>
                 <property name="expand">False</property>
@@ -492,6 +493,7 @@
                 <property name="label" translatable="yes">Undo</property>
                 <property name="use_underline">True</property>
                 <property name="icon_name">edit-undo</property>
+                <signal name="clicked" handler="undo"/>
               </widget>
               <packing>
                 <property name="expand">False</property>
@@ -504,6 +506,7 @@
                 <property name="label" translatable="yes">Redo</property>
                 <property name="use_underline">True</property>
                 <property name="icon_name">edit-redo</property>
+                <signal name="clicked" handler="redo"/>
               </widget>
               <packing>
                 <property name="expand">False</property>

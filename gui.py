@@ -173,6 +173,10 @@ class GeneratorGUI():
 
     def selection_changed(self, selection, data=None):
         self.save_map()
+        try:
+            self.source_editor.flush_buffer()
+        except AttributeError:
+            pass
 
         model, iter = selection.get_selected()
         if not iter:
@@ -181,6 +185,11 @@ class GeneratorGUI():
         self.edit_widgets['name'].set_text(self.model.get(iter, 0)[0])
         self.edit_widgets['title'].set_text(self.model.get(iter, 1)[0])
         self.edit_widgets['source'].set_text(self.model.get(iter, 4)[0])
+
+        content = self.model.get(iter, 4)[0]
+        self.source_editor.allocate_buffer(content)
+        self.source_editor.switch_to_buffer(content)
+        self.source_editor.load_file_to_buffer(os.path.join('content', content), content)
 
         modules = self.model.get(iter, 3)[0]
 
@@ -205,8 +214,6 @@ class GeneratorGUI():
             return
 
         self.templates_combo.set_active_iter(index)
-
-        #TODO: flush buffer in editor and switch it to empty buffer
 
     def populate_tree(self):
         self.model = gtk.TreeStore(
