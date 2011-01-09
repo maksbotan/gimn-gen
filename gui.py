@@ -3,7 +3,7 @@
 import os, json
 import gobject, gtk, gtk.glade
 
-import source_editor
+import source_editor, site_control
 
 class GeneratorGUI():
     """
@@ -41,6 +41,9 @@ class GeneratorGUI():
         self.widgets.get_widget('right_pane').pack_start(self.custom_area)
         self.source_editor = source_editor.SourceEditor(self.widgets)
         self.custom_area.append_page(self.source_editor.get_content(), gtk.Label("Source editor"))
+
+        self.site_control = site_control.SiteControl(self.widgets)
+        self.custom_area.append_page(self.site_control.get_content(), gtk.Label("Site control"))
 
         self.window.show_all()
 
