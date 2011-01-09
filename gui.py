@@ -148,7 +148,8 @@ class GeneratorGUI():
     def new_node(self, btn):
         model, iter = self.selection.get_selected()
 
-        self.model.insert_after(None, iter, ['New', u'', '', [], ''])
+        template = self.templates_model.get(self.templates_model.get_iter_first(), 0)
+        self.model.insert_after(None, iter, ['New', u'', template, [], ''])
 
     def new_child(self, btn):
         model, iter = self.selection.get_selected()
@@ -156,7 +157,8 @@ class GeneratorGUI():
         if self.model.iter_parent(iter):
             return
 
-        self.model.append(iter, ['New', u'', '', [], ''])
+        template = self.templates_model.get(self.templates_model.get_iter_first(), 0)
+        self.model.append(iter, ['New', u'', template, [], ''])
 
     def remove_node(self, btn):
         model, iter = self.selection.get_selected()
