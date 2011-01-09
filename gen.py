@@ -34,10 +34,15 @@ class Generator():
     
                 modules[i] = getattr(module,i)
 
+            try:
+                content = open(os.path.join('content', node['sources']),'r').read().decode('utf-8')
+            except IOError:
+                content = open(os.path.join('content', 'fish.cont'),'r').read().decode('utf-8')
+
             f.write(template.render(
                 prefix = '../' * level,
                 title  = node['title'],
-                content = open(os.path.join('content', node['sources']),'r').read().decode('utf-8'),
+                content = content,
                 nodes = self.structure,
                 name = node['name'],
                 **modules
