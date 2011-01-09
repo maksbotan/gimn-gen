@@ -39,7 +39,10 @@ class SourceEditor():
         self.text_area.add(self.view)
 
         #Connect our signals
-        widgets_tree.signal_autoconnect({'save': self.save_buffer})
+        widgets_tree.signal_autoconnect({
+                    'save': self.save_buffer,
+                    'undo': self.undo_action,
+                    'redo': self.redo_action})
 
         #Create empty buffer and switch to it
         self.allocate_buffer('empty')
@@ -112,7 +115,9 @@ class SourceEditor():
             #If file doesn't exists, create new one
             open(file_name, 'w').write('')
 
+        self.buffers[buffer_name][0].begin_not_undoable_action()
         self.buffers[buffer_name][0].set_text(open(file_name, 'r').read())
+        self.buffers[buffer_name][0].end_not_undoable_action()
         self.buffers[buffer_name][1] = file_name
 
     def flush_buffer(self, buffer_name=None):
@@ -138,7 +143,33 @@ class SourceEditor():
             f.write(self.buffers[buffer_name][0].get_text(start, end).encode('utf-8'))
 
     def save_buffer(self, btn):
+        """
+        Signal handler to save buffer on user request
+        """
+
         self.flush_buffer()
+
+    def undo_action(self, btn):
+        """
+        Signal handler to undo last action
+        """
+
+        if not self.current_buffer in self.buffers:
+            #Invalid current buffer, abort
+            return
+
+        self.buffers[self.current_buffer][0].undo()
+
+    def redo_action(self, btn):
+        """
+        Signal handler to redo last action
+        """
+
+        if not self.current_buffer in self.buffers:
+            #Invalid current buffer, abort
+            return
+
+        self.buffers[self.current_buffer][0].redo()
 
     def get_sourcelanguage(self):
         """
