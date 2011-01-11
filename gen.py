@@ -8,68 +8,95 @@ OUTPUT_DIR = 'generated'
 class Generator():
     def __init__(self):
         self.env = jinja2.Environment(loader=jinja2.FileSystemLoader('templates', encoding='utf-8'))
-        self.templates = [ self.env.get_template(i) for i in os.listdir('templates') if i.endswith('.tmp') ]
-        
         self.structure = json.load(open('site_map.json', 'r'), encoding='utf-8')
 
-    def process_node(self, node, level, path):
-        prefix = "../" * level
-        print '[+] Processing node %s on %s' % (node['name'], prefix)
+    def process_node(self, node, level, path, title):
+        print self.log(level, 'Processing node {0} on {1}'.format(node['name'], level), 'good')
 
         if node['subs']:
-            self.recreate_dirs(os.path.join(path, node['name']))
+            self.recreate_dirs(*self.cat_list(OUTPUT_DIR, path, node['name']), level=level)
         else:
-            self.recreate_dirs(path)
-      
-        template = self.get_template(node['template'])
-        with open(os.path.join(OUTPUT_DIR, path, '%s.htm' % node['name']), 'w') as f:
-            print '[+][+] Writing file %s' % os.path.join(path, node['name'])
+            self.recreate_dirs(*self.cat_list(OUTPUT_DIR, path), level=level)
 
-            modules = {}
-            for i in node['modules']:
-                try:
-                    module = imp.load_source(i, 'modules/%s.py' % i)
-                except:
-                    raise Exception('Unknown module: %s' % i)
+        #Try to load template
+        try:
+            template = self.env.get_template(node['template'])
+        except jinja2.TemplateNotFound:
+            print self.log(level,
+                'Node {0} not generated due to missing template {1}, also \
+refusing to generate its subnodes!'.format(node['name'], node['template']),
+                'err')
+            print ''
+            return
     
-                modules[i] = getattr(module,i)
+        if not os.path.exists(os.path.join('content', node['sources'])):
+            print self.log(level, 'Content file {0} for node {1} not found, using \
+default one (fish.cont)'.format(node['sources'], node['name']),
+                     'warn')
+            source = 'fish.cont'
+        else:
+            source = node['sources']
 
-            try:
-                content = open(os.path.join('content', node['sources']),'r').read().decode('utf-8')
-            except IOError:
-                content = open(os.path.join('content', 'fish.cont'),'r').read().decode('utf-8')
+        with open(os.path.join('content', source)) as f:
+            content = f.read().decode('utf-8')
 
-            f.write(template.render(
-                prefix = '../' * level,
-                title  = node['title'],
-                content = content,
-                nodes = self.structure,
-                name = node['name'],
-                **modules
-                ).encode('utf8'))
+        with open(os.path.join(*self.cat_list(OUTPUT_DIR, path, '{0}.htm'.format(node['name']))), 'w') as f:
+            print self.log(level, 'Writing file {0}'.format(os.path.join(*self.cat_list(path, '{0}.htm'.format(node['name'])))), 'good')
+            page = template.render(
+                                    me = node,
+                                    prefix = '../' * level,
+                                    content = content,
+                                    path = os.path.join(*path),
+                                    title = ' :: '.join(self.cat_list(title, node['title'])),
+                                    nodes = self.structure).encode('utf-8')
+            f.write(page)
+
+        print ''
 
         for sub in node['subs']:
-            self.process_node(sub, level+1, node['name']) 
+            self.process_node(
+                node = sub,
+                level = level+1,
+                path = self.cat_list(path, node['name']),
+                title = self.cat_list(title, node['title'])
+            )
 
-    def get_template(self, name):
-        temps = [ i for i in self.templates if i.name == name]
-        if temps:
-            return temps[0]
-        else:
-            raise Exception('Unkonwn template %s' % name)
+    def log(self, level, text, color='normal'):
+        """
+        Auxillary function for making '[+]' line headers and logging with colors
+        """
+
+        colors = {'normal': '\033[0m', 'good': '\033[32;1m', 'warn': '\033[33;1m', 'err': '\033[31;1m'}
+
+        return '{0}{1} {2}{3}'.format(colors[color], '[+]' * (level+1), text, colors['normal'])
+
+    def cat_list(self, *args):
+        """
+        Auxillary funciton to ease doing 'f(*a, b)' calls
+        """
+
+        res = []
+        for i in args:
+            if type(i) == list or type(i) == tuple:
+                res += i
+            else:
+                res.append(i)
         
-    def recreate_dirs(self, filename):
-        path = [ OUTPUT_DIR ] + filename.split(os.path.sep)
+        return res
         
-        for i in range(1,len(path)+1):
-            if not os.path.exists(os.path.join(*path[:i])):
-                print '[+][+] Creating dir %s' % path[:i]
-                os.mkdir(os.path.join(*path[:i]))
+    def recreate_dirs(self, *args, **kwargs):
+        for i in range(1,len(args)+1):
+            if not os.path.exists(os.path.join(*args[:i])):
+                print self.log(
+                    kwargs.get('level', 0),
+                    'Creating dir {0}'.format(os.path.join(*args[:i])),
+                    'good')
+                os.mkdir(os.path.join(*args[:i]))
 
     def regen_site(self):
         #DFS-like node processing
         for node in self.structure:
-            self.process_node(node, 0, '')
+            self.process_node(node, 0, [''], [])
 
 if __name__ == '__main__':
     gen = Generator()
