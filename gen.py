@@ -40,6 +40,22 @@ default one (fish.cont)'.format(node['sources'], node['name']),
         with open(os.path.join('content', source)) as f:
             content = f.read().decode('utf-8')
 
+        modules = {}
+        for module in node['modules']:
+            try:
+                modules[module] = json.load(
+                    open(os.path.join('modules', '{0}.json'.format(module))))
+            except IOError:
+                print self.log(level, 'Cannot open file {0}, refusing to \
+generate node {1} and all its subnodes!'.format(module, node['name']), 'err')
+                print ''
+                return
+            except ValueError as e:
+                print self.log(level, 'JSON cannot parse file {0}, refusing \
+to generate node {1} and all its subnodes! Details:\n{2}'.format(module, node['name'], e), 'err')
+                print ''
+                return
+
         with open(os.path.join(*self.cat_list(OUTPUT_DIR, path, '{0}.htm'.format(node['name']))), 'w') as f:
             print self.log(level, 'Writing file {0}'.format(os.path.join(*self.cat_list(path, '{0}.htm'.format(node['name'])))), 'good')
             page = template.render(
@@ -48,7 +64,8 @@ default one (fish.cont)'.format(node['sources'], node['name']),
                                     content = content,
                                     path = os.path.join(*path),
                                     title = ' :: '.join(self.cat_list(title, node['title'])),
-                                    nodes = self.structure).encode('utf-8')
+                                    nodes = self.structure,
+                                    **modules).encode('utf-8')
             f.write(page)
 
         print ''
