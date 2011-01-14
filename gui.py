@@ -91,6 +91,7 @@ class GeneratorGUI():
             self.checks[checkbox] = module
             self.modules_vbox.pack_start(checkbox, False)
             checkbox.connect("toggled", self.module_checked)
+            checkbox.show()
 
     def module_checked(self, check):
         model, iter = self.selection.get_selected()
