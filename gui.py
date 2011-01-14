@@ -3,7 +3,8 @@
 import os, json
 import gobject, gtk, gtk.glade
 
-import source_editor, site_control
+#Import other gui parts
+import source_editor, site_control, modules_editor
 
 class GeneratorGUI():
     """
@@ -39,11 +40,14 @@ class GeneratorGUI():
 
         self.custom_area = gtk.Notebook()
         self.widgets.get_widget('right_pane').pack_start(self.custom_area)
-        self.source_editor = source_editor.SourceEditor(self.widgets)
+        self.source_editor = source_editor.SourceEditor()
         self.custom_area.append_page(self.source_editor.get_content(), gtk.Label("Source editor"))
 
         self.site_control = site_control.SiteControl(self.widgets)
         self.custom_area.append_page(self.site_control.get_content(), gtk.Label("Site control"))
+
+        self.modules_editor = modules_editor.ModulesEditor(self.widgets, self.populate_modules)
+        self.custom_area.append_page(self.modules_editor.get_content(), gtk.Label("Modules editor"))
 
         self.window.show_all()
 
@@ -77,7 +81,7 @@ class GeneratorGUI():
         self.templates_combo.add_attribute(cell, 'text', 0)
 
     def populate_modules(self):
-        modules = [ i[:-3] for i in os.listdir('modules') if i.endswith('.py') and i != '__init__.py' ]
+        modules = [ i[:-5] for i in os.listdir('modules') if i.endswith('.json') and i != '__init__.py' ]
 
         self.checks = {}
         self.modules_vbox.foreach(self.modules_vbox.remove)

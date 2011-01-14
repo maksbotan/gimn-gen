@@ -1,19 +1,22 @@
 
 import os
-import gtk, gobject, gtksourceview2
+import gtk, gobject, gtk.glade, gtksourceview2
 
 class SourceEditor():
     """
     Class representing source editor
     """
 
-    def __init__(self, widgets_tree):
+    def __init__(self, language='html'):
         """
         Constructor for SourceEditor class
 
         params:
             - widgets_tree: gtk.glade.XML object with needed widgets
         """
+
+        #Load glade widgets from file
+        widgets_tree = gtk.glade.XML('source_editor.ui')
 
         #Get main widgets container
         self.editor_vbox = widgets_tree.get_widget('editor')
@@ -30,7 +33,7 @@ class SourceEditor():
         self.current_buffer = 'empty'
 
         #Initialize source language for SourceView
-        self.get_sourcelanguage()
+        self.get_sourcelanguage(language)
         #Initialize SourceView widget and add to container
         self.view = gtksourceview2.View()
         #Customize it's appearence
@@ -171,12 +174,12 @@ class SourceEditor():
 
         self.buffers[self.current_buffer][0].redo()
 
-    def get_sourcelanguage(self):
+    def get_sourcelanguage(self, language):
         """
-        Get gtksourceview2.Language instance for html
+        Get gtksourceview2.Language instance for required lang
         """
         self.lm = gtksourceview2.LanguageManager()
-        self.lang = self.lm.get_language('html')
+        self.lang = self.lm.get_language(language)
 
     def get_content(self):
         """
