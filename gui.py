@@ -165,9 +165,6 @@ class GeneratorGUI():
     def new_child(self, btn):
         model, iter = self.selection.get_selected()
 
-        if self.model.iter_parent(iter):
-            return
-
         template = self.templates_model.get(self.templates_model.get_iter_first(), 0)
         self.model.append(iter, ['New', u'', template, [], 'fish.cont'])
 
