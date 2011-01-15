@@ -7,7 +7,7 @@
         {% for content in featured %}
     	    <li class="ui-tabs-nav-item{% if loop.first %}  ui-tabs-selected{% endif %}" id="nav-fragment-{{ loop.index }}">
                 <a href="#fragment-{{ loop.index }}">
-                    <img src="images/image{{ loop.index }}-small.jpg" alt="" />{{ content.annot }}</a>
+                    <img src="{{ prefix }}images/image{{ loop.index }}-small.jpg" alt="" />{{ content.annot }}</a>
             </li>
         {% endfor %}
         </ul>
