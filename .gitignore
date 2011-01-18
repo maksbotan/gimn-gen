@@ -1,4 +1,6 @@
 *.pyc
 generated/*
 content/*
+templates/*
+modules/*
 *.swp

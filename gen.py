@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 
 import jinja2
-import os, imp, json
+import os, sys, json
 
 OUTPUT_DIR = 'generated'
+#Color map for.log function
+colors = {'normal': '\033[0m', 'good': '\033[32;1m', 'warn': '\033[33;1m', 'err': '\033[31;1m'}
+
 
 class Generator():
     def __init__(self):
@@ -82,8 +85,6 @@ to generate node {1} and all its subnodes! Details:\n{2}'.format(module, node['n
         """
         Auxillary function for making '[+]' line headers and logging with colors
         """
-
-        colors = {'normal': '\033[0m', 'good': '\033[32;1m', 'warn': '\033[33;1m', 'err': '\033[31;1m'}
 
         return '{0}{1} {2}{3}'.format(colors[color], '[+]' * (level+1), text, colors['normal'])
 
