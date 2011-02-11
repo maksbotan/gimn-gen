@@ -40,10 +40,20 @@ class WordImporter():
         os.remove(self.html.name)
 
     def get_content(self):
-        pass
+        """
+        Load only real content of doc, doing image fixing
+        """
+
+        self._load(True)
+        return self.html.name
 
     def get_full(self):
-        pass
+        """
+        Load whole html page of doc, doing image fixing
+        """
+
+        self._load(False)
+        return self.html.name
 
     def _fix_images(self):
         """
@@ -67,7 +77,6 @@ class WordImporter():
 
         #Save fixed html in file
         html = bs.prettify()
-        print self.html.name
         self.html_map.seek(0)
         self.html_map.resize(len(html))
         self.html_map.write(html)
