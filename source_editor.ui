@@ -59,6 +59,28 @@
                 <property name="homogeneous">True</property>
               </packing>
             </child>
+            <child>
+              <widget class="GtkSeparatorToolItem" id="toolbutton2">
+                <property name="visible">True</property>
+              </widget>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkToolButton" id="word">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Import MS Word document</property>
+                <property name="use_underline">True</property>
+                <property name="icon_name">gnome-mime-application-msword</property>
+                <signal name="clicked" handler="word_import"/>
+              </widget>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
           </widget>
           <packing>
             <property name="expand">False</property>

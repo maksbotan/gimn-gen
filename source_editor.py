@@ -1,6 +1,7 @@
 
-import os
+import os, shutil
 import gtk, gobject, gtk.glade, gtksourceview2
+from word_importer import WordImporter
 
 class SourceEditor():
     """
@@ -45,13 +46,14 @@ class SourceEditor():
         widgets_tree.signal_autoconnect({
                     'save': self.save_buffer,
                     'undo': self.undo_action,
-                    'redo': self.redo_action})
+                    'redo': self.redo_action,
+                    'word_import': self.word_import})
 
         #Create empty buffer and switch to it
         self.allocate_buffer('empty')
         self.switch_to_buffer('empty')
 
-    def allocate_buffer(self, name):
+    def allocate_buffer(self, name, level=0):
         """
         Create a new gtk.SourceBuffer, set it's properties and store for future use
 
@@ -66,8 +68,8 @@ class SourceEditor():
         buffer = gtksourceview2.Buffer()
         buffer.set_language(self.lang)
 
-        #Store in form [buffer, filename]
-        self.buffers[name] = [buffer, '']
+        #Store in form [buffer, filename, level]
+        self.buffers[name] = [buffer, '', level]
 
     def remove_buffer(self, name):
         """
@@ -98,6 +100,45 @@ class SourceEditor():
         #Do switch and remember selection
         self.view.set_buffer(self.buffers[name][0])
         self.current_buffer = name
+
+    def word_import(self, btn):
+        """
+        Signal handler to allow user load word document into current buffer
+        """
+
+        if not self.current_buffer in self.buffers:
+            #Wrong buffer, abort
+            return
+
+        buf = self.buffers[self.current_buffer]
+
+        #Create gtk file dialog and set up filter in it
+        file_filter = gtk.FileFilter()
+        file_filter.set_name('MS Word document')
+        file_filter.add_mime_type('application/msword')
+
+        dialog = gtk.FileChooserDialog('Choose your word document',
+                             action=gtk.FILE_CHOOSER_ACTION_OPEN,
+                             buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                                      gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        dialog.add_filter(file_filter)
+
+        res = dialog.run()
+
+        if res == gtk.RESPONSE_OK:
+            filename = dialog.get_filename()
+            dialog.destroy()
+        else:
+            dialog.destroy()
+            return
+
+        #Initialize word importer
+        importer = WordImporter(filename, '{0}images'.format('../'*buf[2]),
+                                'generated/images')
+        result = importer.get_content()
+        shutil.copy(result, buf[1])
+
+        self.load_file_to_buffer(buf[1], self.current_buffer)
 
     def load_file_to_buffer(self, file_name, buffer_name):
         """

@@ -192,7 +192,7 @@ class GeneratorGUI():
         self.edit_widgets['source'].set_text(self.model.get(iter, 4)[0])
 
         content = self.model.get(iter, 4)[0]
-        self.source_editor.allocate_buffer(content)
+        self.source_editor.allocate_buffer(content, len(self.model.get_path(iter))-1)
         self.source_editor.switch_to_buffer(content)
         self.source_editor.load_file_to_buffer(os.path.join('content', content), content)
 
