@@ -81,6 +81,32 @@
                 <property name="homogeneous">True</property>
               </packing>
             </child>
+            <child>
+              <widget class="GtkToolButton" id="image">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">image</property>
+                <property name="use_underline">True</property>
+                <property name="icon_name">image</property>
+                <signal name="clicked" handler="embed_image"/>
+              </widget>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkToolButton" id="toolbutton3">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">file</property>
+                <property name="use_underline">True</property>
+                <property name="stock_id">gtk-file</property>
+                <signal name="clicked" handler="embed_file"/>
+              </widget>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
           </widget>
           <packing>
             <property name="expand">False</property>

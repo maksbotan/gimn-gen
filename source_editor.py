@@ -47,18 +47,22 @@ class SourceEditor():
                     'save': self.save_buffer,
                     'undo': self.undo_action,
                     'redo': self.redo_action,
-                    'word_import': self.word_import})
+                    'word_import': self.word_import,
+                    'embed_image': self.embed_image,
+                    'embed_file': self.embed_file})
 
         #Create empty buffer and switch to it
         self.allocate_buffer('empty')
         self.switch_to_buffer('empty')
 
-    def allocate_buffer(self, name, level=0):
+    def allocate_buffer(self, name, level=0, path=''):
         """
         Create a new gtk.SourceBuffer, set it's properties and store for future use
 
         params:
             - name: Name of buffer to create
+            - level: Level of page in site directory structure
+            - path: Path to page relative to site root
         """
 
         if name in self.buffers:
@@ -69,7 +73,7 @@ class SourceEditor():
         buffer.set_language(self.lang)
 
         #Store in form [buffer, filename, level]
-        self.buffers[name] = [buffer, '', level]
+        self.buffers[name] = [buffer, '', level, path]
 
     def remove_buffer(self, name):
         """
@@ -117,28 +121,103 @@ class SourceEditor():
         file_filter.set_name('MS Word document')
         file_filter.add_mime_type('application/msword')
 
-        dialog = gtk.FileChooserDialog('Choose your word document',
-                             action=gtk.FILE_CHOOSER_ACTION_OPEN,
-                             buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                                      gtk.STOCK_OPEN, gtk.RESPONSE_OK))
-        dialog.add_filter(file_filter)
-
-        res = dialog.run()
-
-        if res == gtk.RESPONSE_OK:
-            filename = dialog.get_filename()
-            dialog.destroy()
-        else:
-            dialog.destroy()
+        #Get file from user
+        filename = self.open_file_dialog("Choose your word document", file_filter)
+        if not filename:
             return
 
         #Initialize word importer
         importer = WordImporter(filename, '{0}images'.format('../'*buf[2]),
                                 'generated/images')
         result = importer.get_content()
+
+        #Place file to proper location
         shutil.copy(result, buf[1])
 
+        #Update contents in buffer
         self.load_file_to_buffer(buf[1], self.current_buffer)
+
+    def embed_image(self, btn):
+        """
+        Signal handler to copy image to site and paste correct <img> tag to buffer
+        """
+
+        if not self.current_buffer in self.buffers:
+            #Wrong buffer, abort
+            return
+
+        buf = self.buffers[self.current_buffer]
+
+        #Create gtk file dialog and set up filter in it
+        file_filter = gtk.FileFilter()
+        file_filter.set_name('Image file')
+        file_filter.add_mime_type('image/*')
+
+        #Get file from user
+        filename = self.open_file_dialog("Choose image file", file_filter)
+        if not filename:
+            return
+
+        #Copy image file to proper location
+        shutil.copy(filename, 'generated/images')
+
+        #Build <img> tag
+        tag = '<img alt="{1}" src="{0}images/{1}"'.format('../'*buf[2],
+                            os.path.basename(filename))
+
+        #Insert img tag to page
+        buf[0].insert_at_cursor(tag)
+
+    def embed_file(self, btn):
+        """
+        Signal handler to copy and paste link to generic file
+        """
+
+        if not self.current_buffer in self.buffers:
+            #Wrong buffer, abort
+            return
+
+        buf = self.buffers[self.current_buffer]
+
+        #Get file from user
+        filename = self.open_file_dialog()
+        if not filename:
+            return
+
+        #Copy image file to proper location
+        shutil.copy(filename, 'generated/files')
+
+        #Build <a> tag
+        tag = '<a href="{0}files/{1}"> </a>'.format('../'*buf[2], 
+                            os.path.basename(filename))
+
+        #Insert 'a' tag to page
+        buf[0].insert_at_cursor(tag)
+
+    def open_file_dialog(self, title="Choose file", f_filter=None):
+        """
+        Auxillary function to construct and run gtk file dialog
+        params
+            - title: Title to display on dialog
+            - f_filter: gtk.FileFilter object for dialog
+        """
+
+        dialog = gtk.FileChooserDialog(title,
+                             action=gtk.FILE_CHOOSER_ACTION_OPEN,
+                             buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                                      gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        if f_filter:
+            dialog.add_filter(f_filter)
+
+        res = dialog.run()
+
+        if res == gtk.RESPONSE_OK:
+            filename = dialog.get_filename()
+        else:
+            filename = ''
+
+        dialog.destroy()
+        return filename
 
     def load_file_to_buffer(self, file_name, buffer_name):
         """
