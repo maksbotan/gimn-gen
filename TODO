@@ -1,0 +1,3 @@
+source_editor.py
+----------------
+    * Refactor 'if not self.current_buffer in self.buffers' to decorator
