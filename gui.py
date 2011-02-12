@@ -192,7 +192,7 @@ class GeneratorGUI():
         self.edit_widgets['source'].set_text(self.model.get(iter, 4)[0])
 
         content = self.model.get(iter, 4)[0]
-        self.source_editor.allocate_buffer(content, len(self.model.get_path(iter))-1)
+        self.source_editor.allocate_buffer(content, len(self.model.get_path(iter))-1, self.make_path(iter))
         self.source_editor.switch_to_buffer(content)
         self.source_editor.load_file_to_buffer(os.path.join('content', content), content)
 
@@ -280,6 +280,30 @@ class GeneratorGUI():
             node['subs'] = []
 
         return node
+
+    def make_path(self, iter):
+        """
+        Auxillary function to calculate path to current node relative to site root
+
+        params:
+            - iter: gtk.TreeIter pointing to current node
+        """
+
+        #Get TreeModel path to node
+        model_path = self.model.get_path(iter)
+
+        #Containter for path elements
+        path = []
+
+        #Scan nodes from top to depth
+        for i in xrange(len(model_path)-1):
+            #Currently scanned node
+            node_iter = self.model.get_iter(model_path[:i+1])
+            node_name = self.model.get(node_iter, 0)[0]
+            #Store its name in path
+            path.append(node_name)
+
+        return "/".join(path)
 
     def show_editor(self, btn):
         #TODO: Switch editor to current buffer
