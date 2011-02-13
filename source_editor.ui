@@ -107,6 +107,28 @@
                 <property name="homogeneous">True</property>
               </packing>
             </child>
+            <child>
+              <widget class="GtkSeparatorToolItem" id="toolbutton4">
+                <property name="visible">True</property>
+              </widget>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkToolButton" id="preview">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Preview</property>
+                <property name="use_underline">True</property>
+                <property name="icon_name">web-browser</property>
+                <signal name="clicked" handler="preview"/>
+              </widget>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
           </widget>
           <packing>
             <property name="expand">False</property>

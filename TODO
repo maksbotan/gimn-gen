@@ -1,5 +1,7 @@
 General infrastrucrure
 ----------------------
+    * Restruct *.py files into package
+    * Introduce configuration system fot file paths
     * Add 'hide' property to node to allow user to temporaly disable node generation
     * Make BeautifulSoup based beautifier for word-generated html's
     * Introduce pageless nodes (for top-level menu items)
@@ -11,4 +13,4 @@ gen.py
 source_editor.py
 ----------------
     * Refactor 'if not self.current_buffer in self.buffers' to decorator
-    * Add preview through webkit-gtk
+    * Add editor features to preview window

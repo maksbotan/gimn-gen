@@ -2,6 +2,7 @@
 import os, shutil
 import gtk, gobject, gtk.glade, gtksourceview2
 from word_importer import WordImporter
+from webkit_window import WebkitWindow
 
 class SourceEditor():
     """
@@ -42,6 +43,9 @@ class SourceEditor():
         self.view.set_wrap_mode(gtk.WRAP_WORD_CHAR)
         self.text_area.add(self.view)
 
+        #Initialize webkit window
+        self.webkit = WebkitWindow()
+
         #Connect our signals
         widgets_tree.signal_autoconnect({
                     'save': self.save_buffer,
@@ -49,7 +53,8 @@ class SourceEditor():
                     'redo': self.redo_action,
                     'word_import': self.word_import,
                     'embed_image': self.embed_image,
-                    'embed_file': self.embed_file})
+                    'embed_file': self.embed_file,
+                    'preview': self.preview})
 
         #Create empty buffer and switch to it
         self.allocate_buffer('empty')
@@ -104,6 +109,8 @@ class SourceEditor():
         #Do switch and remember selection
         self.view.set_buffer(self.buffers[name][0])
         self.current_buffer = name
+
+        self.webkit.hide()
 
     def word_import(self, btn):
         """
@@ -218,6 +225,20 @@ class SourceEditor():
 
         dialog.destroy()
         return filename
+
+    def preview(self, btn=None):
+        """
+        Launch webkit previewer
+        """
+
+        if not self.current_buffer in self.buffers or self.current_buffer == 'empty':
+            #Wrong buffer, return
+            return
+
+        buf = self.buffers[self.current_buffer]
+
+        self.webkit.show()
+        self.webkit.load_file(buf[1])
 
     def load_file_to_buffer(self, file_name, buffer_name):
         """
