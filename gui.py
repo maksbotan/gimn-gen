@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import os, json
+import os, json, difflib
 import gobject, gtk, gtk.glade
 
 #Import other gui parts
@@ -261,6 +261,21 @@ class GeneratorGUI():
             map.append(self.serialize_node(iter))
             iter = self.model.iter_next(iter)
 
+#TODO: CODE NEEDS REWORK
+#        #calculate difference between old state and current
+#        old_map = [i.decode('utf-8') for i in open('site_map.json', 'r').readlines()]
+#        new_map = json.dums(map, encoding='utf-8').splitlines(1)
+#        diff = difflib.ndiff(old_map, new_map)
+#
+#        #Remove all redo items from buffer
+#        del self.undo_buffer[self.undo_pointer+1:]
+#        #Store new diff for future undo
+#        self.undo_buffer.append(diff)
+#        #Cut undo buffer to 10 levels
+#        del self.undo_buffer[:-10]
+#        #Move pointer to top of list
+#        self.undo_pointer = len(self.undo_buffer) + 1
+
         json.dump(map, open('site_map.json', 'w'), encoding='utf-8')
 #        print json.dumps(map, encoding='utf-8')
         self.map = map
@@ -281,6 +296,20 @@ class GeneratorGUI():
 
         return node
 
+#TODO: CODE NEEDS REWORK
+#    def undo(self, btn=None):
+#        """
+#        Undo one action if possible
+#        """
+#
+#        if not self.undo_buffer:
+#            #Buffer empty
+#            return
+#        
+#        #Get diff and move pointer
+#        diff = self.undo_buffer[self.undo_pointer]
+#        self.undo_pointer -= 1
+         
     def make_path(self, iter):
         """
         Auxillary function to calculate path to current node relative to site root
