@@ -5,6 +5,7 @@ General infrastrucrure
     * Add 'hide' property to node to allow user to temporaly disable node generation
     * Make BeautifulSoup based beautifier for word-generated html's
     * Introduce pageless nodes (for top-level menu items)
+    * Add undo/redo system to gui.py
 
 gen.py
 ------

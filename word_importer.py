@@ -69,6 +69,10 @@ class WordImporter():
 
         for image in bs('img'):
             file_name = image['src']
+            
+            #if image wasn't processed by wv, then don't fix it
+            if not os.exists(os.path.join(img_dir, file_name)):
+                continue
 
             #Put image to proper location
             shutil.move(os.path.join(img_dir, file_name), os.path.join(self.image_dest))
