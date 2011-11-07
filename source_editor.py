@@ -169,7 +169,7 @@ class SourceEditor():
         shutil.copy(filename, 'generated/images')
 
         #Build <img> tag
-        tag = '<img alt="{1}" src="{0}images/{1}"'.format('../'*buf[2],
+        tag = '<img alt="{1}" src="{0}images/{1}">'.format('../'*buf[2],
                             os.path.basename(filename))
 
         #Insert img tag to page
