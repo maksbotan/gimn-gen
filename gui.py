@@ -63,6 +63,7 @@ class GeneratorGUI():
         self.widgets.get_widget('title').connect('changed', self.text_edited, 1)
         self.widgets.get_widget('source').connect('changed', self.text_edited, 4)
         self.widgets.get_widget('template').connect('changed', self.select_template)
+        self.widgets.get_widget('visible').connect('toggled', self.visible_toggled)
 
     def generate(self, data=None):
         self.save_map()
@@ -118,6 +119,13 @@ class GeneratorGUI():
             return
 
         self.model.set(iter, column, entry.get_text())
+
+    def visible_toggled(self, checkbox):
+        model, iter = self.selection.get_selected()
+        if not iter:
+            return
+
+        self.model.set(iter, 5, checkbox.get_active())
 
     def select_template(self, combo):
         model, iter = self.selection.get_selected()
@@ -190,6 +198,7 @@ class GeneratorGUI():
         self.edit_widgets['name'].set_text(self.model.get(iter, 0)[0])
         self.edit_widgets['title'].set_text(self.model.get(iter, 1)[0])
         self.edit_widgets['source'].set_text(self.model.get(iter, 4)[0])
+        self.widgets.get_widget('visible').set_active(self.model.get(iter, 5)[0])
 
         content = self.model.get(iter, 4)[0]
         self.source_editor.allocate_buffer(content, len(self.model.get_path(iter))-1, self.make_path(iter))
@@ -226,7 +235,8 @@ class GeneratorGUI():
                         gobject.TYPE_STRING,    #title
                         gobject.TYPE_STRING,    #template
                         gobject.TYPE_PYOBJECT,  #modules
-                        gobject.TYPE_STRING     #sources
+                        gobject.TYPE_STRING,    #sources
+                        gobject.TYPE_BOOLEAN    #visible
                      )
 
         self.treeview.set_model(self.model)
@@ -243,7 +253,8 @@ class GeneratorGUI():
                                             node['title'],
                                             node['template'],
                                             node['modules'],
-                                            node['sources']
+                                            node['sources'],
+                                            node.get('visible', True)
                                          ])
         for sub in node['subs']:
             self.add_node_to_tree(sub, iter)
@@ -281,9 +292,9 @@ class GeneratorGUI():
         self.map = map
 
     def serialize_node(self, iter):
-        columns = ['name', 'title', 'template', 'modules', 'sources']
+        columns = ['name', 'title', 'template', 'modules', 'sources', 'visible']
         
-        node = dict(zip(columns, self.model.get(iter, *range(5))))
+        node = dict(zip(columns, self.model.get(iter, *range(6))))
 
         child = self.model.iter_children(iter)
         if child:
