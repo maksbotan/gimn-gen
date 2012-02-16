@@ -259,7 +259,7 @@
                       <widget class="GtkTable" id="table1">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="n_rows">6</property>
+                        <property name="n_rows">7</property>
                         <property name="n_columns">2</property>
                         <child>
                           <widget class="GtkLabel" id="label3">
@@ -419,6 +419,20 @@
                             <property name="right_attach">2</property>
                             <property name="top_attach">5</property>
                             <property name="bottom_attach">6</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <widget class="GtkCheckButton" id="link">
+                            <property name="label" translatable="yes">Link node</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="draw_indicator">True</property>
+                          </widget>
+                          <packing>
+                            <property name="right_attach">2</property>
+                            <property name="top_attach">6</property>
+                            <property name="bottom_attach">7</property>
                           </packing>
                         </child>
                       </widget>

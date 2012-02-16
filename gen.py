@@ -21,6 +21,12 @@ class Generator():
         else:
             self.recreate_dirs(*self.cat_list(OUTPUT_DIR, path), level=level)
 
+        if node['link']:
+            #Node is simple link, no need to process
+            print self.log(level, 'Processed link to {0}'.format(node['sources']), 'good')
+            print
+            return
+
         #Try to load template
         try:
             template = self.env.get_template(node['template'])

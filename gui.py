@@ -63,7 +63,8 @@ class GeneratorGUI():
         self.widgets.get_widget('title').connect('changed', self.text_edited, 1)
         self.widgets.get_widget('source').connect('changed', self.text_edited, 4)
         self.widgets.get_widget('template').connect('changed', self.select_template)
-        self.widgets.get_widget('visible').connect('toggled', self.visible_toggled)
+        self.widgets.get_widget('visible').connect('toggled', self.set_prop, 5)
+        self.widgets.get_widget('link').connect('toggled', self.set_prop, 6)
 
     def generate(self, data=None):
         self.save_map()
@@ -120,12 +121,12 @@ class GeneratorGUI():
 
         self.model.set(iter, column, entry.get_text())
 
-    def visible_toggled(self, checkbox):
+    def set_prop(self, checkbox, prop):
         model, iter = self.selection.get_selected()
         if not iter:
             return
 
-        self.model.set(iter, 5, checkbox.get_active())
+        self.model.set(iter, prop, checkbox.get_active())
 
     def select_template(self, combo):
         model, iter = self.selection.get_selected()
@@ -174,7 +175,7 @@ class GeneratorGUI():
         model, iter = self.selection.get_selected()
 
         template = self.templates_model.get(self.templates_model.get_iter_first(), 0)[0]
-        self.model.append(iter, ['New', u'', template, [], 'fish.cont'])
+        self.model.append(iter, ['New', u'', template, [], True, 'fish.cont'])
 
     def remove_node(self, btn):
         model, iter = self.selection.get_selected()
@@ -195,10 +196,11 @@ class GeneratorGUI():
         if not iter:
             return
 
-        self.edit_widgets['name'].set_text(self.model.get(iter, 0)[0])
-        self.edit_widgets['title'].set_text(self.model.get(iter, 1)[0])
-        self.edit_widgets['source'].set_text(self.model.get(iter, 4)[0])
+        self.edit_widgets['name'].set_text(str(self.model.get(iter, 0)[0]))
+        self.edit_widgets['title'].set_text(str(self.model.get(iter, 1)[0]))
+        self.edit_widgets['source'].set_text(str(self.model.get(iter, 4)[0]))
         self.widgets.get_widget('visible').set_active(self.model.get(iter, 5)[0])
+        self.widgets.get_widget('link').set_active(self.model.get(iter, 6)[0])
 
         content = self.model.get(iter, 4)[0]
         self.source_editor.allocate_buffer(content, len(self.model.get_path(iter))-1, self.make_path(iter))
@@ -236,7 +238,8 @@ class GeneratorGUI():
                         gobject.TYPE_STRING,    #template
                         gobject.TYPE_PYOBJECT,  #modules
                         gobject.TYPE_STRING,    #sources
-                        gobject.TYPE_BOOLEAN    #visible
+                        gobject.TYPE_BOOLEAN,   #visible
+                        gobject.TYPE_BOOLEAN,   #link
                      )
 
         self.treeview.set_model(self.model)
@@ -254,7 +257,8 @@ class GeneratorGUI():
                                             node['template'],
                                             node['modules'],
                                             node['sources'],
-                                            node.get('visible', True)
+                                            node.get('visible', True),
+                                            node.get('link', False)
                                          ])
         for sub in node['subs']:
             self.add_node_to_tree(sub, iter)
@@ -292,9 +296,9 @@ class GeneratorGUI():
         self.map = map
 
     def serialize_node(self, iter):
-        columns = ['name', 'title', 'template', 'modules', 'sources', 'visible']
+        columns = ['name', 'title', 'template', 'modules', 'sources', 'visible', 'link']
         
-        node = dict(zip(columns, self.model.get(iter, *range(6))))
+        node = dict(zip(columns, self.model.get(iter, *range(7))))
 
         child = self.model.iter_children(iter)
         if child:
