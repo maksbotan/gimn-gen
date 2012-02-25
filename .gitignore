@@ -3,4 +3,6 @@ generated/*
 content/*
 templates/*
 modules/*
+modules
+templates
 *.swp

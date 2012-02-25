@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import gtk, webkit
+from os import getcwd
 
 class WebkitWindow():
     """
@@ -32,21 +33,24 @@ class WebkitWindow():
         #Connect our signals
         self.widgets.connect_signals({'refresh': self.refresh})
 
-    def load_file(self, filename, title=''):
+    def load_file(self, filename, path, title=''):
         """
         Load html file to webkit
 
         params:
             - filename: Name of file to load from
+            - path: Path to page relative to site root
             - title: Title of the page
         """
 
         if self.visible:
             #Load string 'cause webkit cannot load non-strict html's from files
-            self.webkit.load_string(open(filename).read().decode('utf-8'),
+            cwd = getcwd()
+            html = '<link rel="stylesheet" href="{}/generated/style.css" type="text/css"\n<div class="wrapper1"><div class="wrapper"><div class="content">{}</div></div></div>'.format(cwd, open(filename).read().decode('utf-8'))
+            self.webkit.load_string(html,
                                         'text/html',
                                         'utf-8',
-                                        'file://generated')
+                                        'file://{}/generated/{}/'.format(cwd, path))
 
             self.filename = filename
             if title:

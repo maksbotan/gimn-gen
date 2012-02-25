@@ -77,7 +77,7 @@ class SourceEditor():
         buffer = gtksourceview2.Buffer()
         buffer.set_language(self.lang)
 
-        #Store in form [buffer, filename, level]
+        #Store in form [buffer, filename, level, path]
         self.buffers[name] = [buffer, '', level, path]
 
     def remove_buffer(self, name):
@@ -238,7 +238,7 @@ class SourceEditor():
         buf = self.buffers[self.current_buffer]
 
         self.webkit.show()
-        self.webkit.load_file(buf[1])
+        self.webkit.load_file(buf[1], buf[3])
 
     def load_file_to_buffer(self, file_name, buffer_name):
         """
